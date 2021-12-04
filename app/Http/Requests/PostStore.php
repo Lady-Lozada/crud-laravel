@@ -25,9 +25,7 @@ class PostStore extends FormRequest
     {
         return [
             'publication'=>'required|min:3|max:120',
-            'publication_content'=>'required|min:3|max:500',
-            'state_publication'=>'required',
-            'category_id'=>'required'
+            'publication_content'=>'required|min:3|max:500'
         ];
     }
 }
