@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostStore;
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('dashboard.post.index');
+        $posts = Post::orderBy('id', 'ASC')->paginate(10);
+        return view('dashboard.post.index', ['posts' => $posts]);
     }
 
     /**
@@ -25,7 +27,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('dashboard.post.create');
+        //return view('dashboard.post.create',['post'=>new Post()]);
+        $categories = Category::pluck('id','category');
+        return view('dashboard.post.create',['post'=> new Post(),'categories' => $categories]);
     }
 
     /**
@@ -50,7 +54,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('dashboard.post.show');
+        return view('dashboard.post.show', ['post'=>$post]);
     }
 
     /**
@@ -61,7 +65,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('dashboard.post.edit');
+        //return view('dashboard.post.edit', ['post'=>$post]);
+        $categories = Category::pluck('id','category');
+        return view('dashboard.post.edit',['post'=> $post,'categories' => $categories]);
     }
 
     /**
@@ -71,9 +77,10 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostStore $request, Post $post)
     {
-        //
+        $post->update($request -> validated());
+        return back()->with('status', 'Publicación actualizada con éxito');
     }
 
     /**
@@ -84,6 +91,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return back()->with('status', 'Publicación eliminada con éxito');
     }
 }
